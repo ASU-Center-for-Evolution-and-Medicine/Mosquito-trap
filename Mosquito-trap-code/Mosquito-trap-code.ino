@@ -25,9 +25,9 @@ DS3232RTC myRTC;
 ********************** interval (in milliseconds) ---> set the interval time. After each interval time trap will rotate. 1 HR = 3600 seconds = 3600000 milliseconds.***
 **********************************************************************************************************************************************************************/
 //=====================================================================================================================================================================
-/*********************************/             int Alarm_Hour = 14, Alarm_Minute = 26, Alarm_Second = 0;                 //===========================================
-/*********************************/             int rotations = 23;                                                       //===========================================
-/*********************************/             unsigned long interval = 5000;                                         //===========================================
+/*********************************/             int Alarm_Hour = 18, Alarm_Minute = 0, Alarm_Second = 0;                 //===========================================
+/*********************************/             int rotations = 24;                                                       //===========================================
+/*********************************/             unsigned long intervals = 60;                                         //===========================================
 /*********************************/             int rotation_delay = 50;                                         //===========================================
 //=====================================================================================================================================================================
 //=====================================================================================================================================================================
@@ -37,6 +37,7 @@ DS3232RTC myRTC;
 int n_rotations = 0;
 bool trap = false;
 unsigned long previousMillis = 0;
+unsigned long intervals = interval * 60000; 
 
 void setup() {
   Serial.begin(9600);
@@ -48,6 +49,7 @@ void setup() {
   if(digitalRead(BUTTON) == LOW) {
     digitalWrite(13, HIGH);
     set_time();
+    Serial.println("===============================> Alarm set to:"+String(Alarm_Hour)+":"+String(Alarm_Minute)+":"+String(Alarm_Second)+"========================================================");
     delay(3000);
     digitalWrite(13, LOW);
   }
@@ -65,7 +67,8 @@ void loop() {
   Serial.println("Time:"+String(hour(t)) + ":" + String(minute(t)) + ":" + String(second(t)) + " Date:" + String(day(t)) + "/" + String(month(t)) + "/" + String(year(t)));
 
 
-  if(hour(t) == Alarm_Hour && minute(t) == Alarm_Minute && second(t) < 1){
+  if(hour(t) == Alarm_Hour + 1 && minute(t) == Alarm_Minute && second(t) < 1){
+  // if(second(t) == 30){
     Serial.println("Alarm Triggered at: "+String(hour(t)) + ":" + String(minute(t)) + ":" + String(second(t)));
     digitalWrite(13, HIGH);
     trap = true;
