@@ -37,7 +37,7 @@ DS3232RTC myRTC;
 int n_rotations = 0;
 bool trap = false;
 unsigned long previousMillis = 0;
-unsigned long intervals = interval * 60000; 
+unsigned long interval = intervals * 60000; 
 
 void setup() {
   Serial.begin(9600);
