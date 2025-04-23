@@ -68,7 +68,6 @@ void loop() {
 
 
   if(hour(t) == Alarm_Hour + 1 && minute(t) == Alarm_Minute && second(t) < 1){
-  // if(second(t) == 30){
     Serial.println("Alarm Triggered at: "+String(hour(t)) + ":" + String(minute(t)) + ":" + String(second(t)));
     digitalWrite(13, HIGH);
     trap = true;
@@ -78,23 +77,22 @@ void loop() {
   }
 
   if(digitalRead(BUTTON) == LOW){
-    //rotate to adjust
-    digitalWrite(MOTOR, HIGH);
-    delay(100);
-    digitalWrite(MOTOR, LOW);
+
+    //start button timer
+    unsigned long b_push_millis = millis();
+    unsigned long b_release_millis = millis();
+    while (digitalRead(BUTTON) == LOW) b_release_millis = millis();
+
+    if ( b_release_millis - b_push_millis < 2) rotate_trap_until_next();
+    else rotate_to_adjust();
+   
   }
 
   if(trap==true){
 
     if(currentMillis - previousMillis > interval) {
-      //rotate until next magnet hits prox
       previousMillis = millis();
-      digitalWrite(MOTOR, HIGH);
-      delay(1000);
-      while(digitalRead(PROX)==LOW){
-        delay(rotation_delay);
-      }
-      digitalWrite(MOTOR, LOW);
+      rotate_trap_until_next();
       n_rotations++;
       if(n_rotations>=rotations) {trap=false; n_rotations=0;}
 
@@ -104,6 +102,27 @@ void loop() {
 
 
   delay(1000);
+
+}
+
+void rotate_to_adjust(){
+
+    //rotate to adjust
+  digitalWrite(MOTOR, HIGH);
+  delay(100);
+  digitalWrite(MOTOR, LOW);
+
+}
+
+void rotate_trap_until_next(){
+  //rotate until next magnet hits prox
+
+  digitalWrite(MOTOR, HIGH);
+  delay(1000);
+  while(digitalRead(PROX)==LOW){
+    delay(rotation_delay);
+  }
+  digitalWrite(MOTOR, LOW);
 
 }
 
